@@ -1,7 +1,7 @@
 const express = require("express")
 const knex = require("knex")
 const db = require("../data/config");
-const { OPEN_READWRITE } = require("sqlite3");
+
 
 const router = express.Router()
 
@@ -14,8 +14,9 @@ router.get("/cars", async (req,res,next) => {
 });
 
 router.post("/cars", async (req,res,next) => {
-    try{
+    try{//this will insert the new car 
         const [id] = await db("cars").insert(req.body)
+        //this will return the car that was just created so it can be sent as a response 
         const newCar = await db("cars").where({ id }).first()
         res.status(201).json(newCar)
     }catch(err){
@@ -34,7 +35,7 @@ router.get("/cars/:id", async (req,res,next) => {
 });
 
 router.put("/cars/:id", async (req,res,next) => {
-    try{
+    try{//this creates a new object to be added to the array
         await db("cars").update({
             VIN: req.body.VIN,
             make: req.body.make,
@@ -43,7 +44,9 @@ router.put("/cars/:id", async (req,res,next) => {
             transmission: req.body.transmission,
             title: req.body.title
         })
+        //this gets the newly created car object 
         .where("id", req.params.id)
+        //this will return the newly created car object so it can be sent for confirmation that it was created
         const car = await db("cars")
         .where("id", req.params.id)
         .first()
